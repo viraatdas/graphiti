@@ -4,7 +4,8 @@ import typing
 
 from groq import AsyncGroq
 from groq.types.chat import ChatCompletionMessageParam
-from llama_index.embeddings import OllamaEmbedding
+
+from graphiti_core.llm_client.ollama_wrapper import OllamaEmbeddingWrapper
 
 from ..prompts.models import Message
 from .client import LLMClient
@@ -12,7 +13,9 @@ from .config import LLMConfig
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = 'llama-3.1-70b-versatile'  # Make sure this model exists in the Groq system
+# DEFAULT_MODEL = 'llama-3.1-70b-versatile' 
+DEFAULT_MODEL = 'llama-3.1-8b-instant'
+
 
 
 class GroqClient(LLMClient):
@@ -23,10 +26,15 @@ class GroqClient(LLMClient):
         self.client = AsyncGroq(api_key=config.api_key)
         self.model = DEFAULT_MODEL
 
+
     def get_embedder(self) -> typing.Any:
-        """Get embeddings using the Groq client."""
-        logger.info(f"Using model: {self.model}")
-        return OllamaEmbedding(model_name="llama3")
+           """Get embeddings using the OllamaEmbedding model."""
+           return OllamaEmbeddingWrapper(model_name="llama3")
+
+    async def create_embedding(self, input: str) -> list[float]:
+        """Create embedding using the OllamaEmbedding model."""
+        embedding = self.embed_model.get_text_embedding(input)  # Use the correct method
+        return embedding
 
     async def _generate_response(self, messages: list[Message]) -> dict[str, typing.Any]:
         """Generate response using the Groq client."""

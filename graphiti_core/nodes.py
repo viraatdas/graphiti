@@ -169,7 +169,8 @@ class EntityNode(Node):
     async def generate_name_embedding(self, embedder, model='text-embedding-3-small'):
         start = time()
         text = self.name.replace('\n', ' ')
-        embedding = (await embedder.create(input=[text], model=model)).data[0].embedding
+        embedding_response = await embedder.create(input=[text], model=model)
+        embedding = embedding_response.data[0]['embedding'] 
         self.name_embedding = embedding[:EMBEDDING_DIM]
         end = time()
         logger.info(f'embedded {text} in {end - start} ms')

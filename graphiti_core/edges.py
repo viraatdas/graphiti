@@ -133,7 +133,8 @@ class EntityEdge(Edge):
         start = time()
 
         text = self.fact.replace('\n', ' ')
-        embedding = (await embedder.create(input=[text], model=model)).data[0].embedding
+        embedding_response = await embedder.create(input=[text], model=model)
+        embedding = embedding_response.data[0]['embedding'] 
         self.fact_embedding = embedding[:EMBEDDING_DIM]
 
         end = time()
