@@ -93,8 +93,7 @@ async def hybrid_search(
         query_text = query.replace('\n', ' ')
         search_vector = (
             (await embedder.create(input=[query_text], model='text-embedding-3-small'))
-            .data[0]
-            .embedding[:EMBEDDING_DIM]
+            .data[0]["embedding"][:EMBEDDING_DIM]
         )
 
         similarity_search = await edge_similarity_search(
